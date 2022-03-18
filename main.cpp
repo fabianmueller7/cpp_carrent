@@ -3,10 +3,29 @@
 #include <conio.h>
 using namespace std;
 
+///////////////////////////////////////////////////////////
+//Helper
+///////////////////////////////////////////////////////////
+
+
 void clear() {
     // CSI[2J clears screen, CSI[H moves the cursor to top-left corner
     std::cout << "\x1B[2J\x1B[H";
 }
+
+void endprogramm(boolean *continueprogramme) {
+    clear();
+    cout <<"Ending programm";
+    for(int i = 0; i < 3;i++)  {
+        cout<<".";
+        Sleep(500);
+    }
+    *continueprogramme = false;
+}
+
+///////////////////////////////////////////////////////////
+//Menu
+///////////////////////////////////////////////////////////
 
 void color(int color) {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
@@ -21,12 +40,13 @@ void gotoxy(int x, int y) {
 
 int menu() {
 
+    boolean continueprogramm = true;
     clear();
     int Set[] = {7,7,7};
     int counter = 2;
     char key;
 
-    for(int i = 0;;) {
+    while(continueprogramm) {
         
         gotoxy(10,5);
         color(Set[0]);
@@ -39,6 +59,7 @@ int menu() {
         gotoxy(10,7);
         color(Set[2]);
         cout<<"Exit Programm";
+        color(7);
 
         key = _getch();
 
@@ -59,9 +80,8 @@ int menu() {
             }
             if(counter == 3)
             {
-                cout << "Menu 3 is Open";
+                endprogramm(&continueprogramm);
             }
-            
         }
         if(counter == 1) {
             Set[0] = 12;
@@ -82,8 +102,12 @@ int menu() {
     return 0;
 }
 
+///////////////////////////////////////////////////////////
+//Main
+///////////////////////////////////////////////////////////
+
+
 int main() {
-        
     menu();
     return 0;
 }
