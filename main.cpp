@@ -7,14 +7,12 @@ using namespace std;
 //Helper
 ///////////////////////////////////////////////////////////
 
-
 void clear() {
     // CSI[2J clears screen, CSI[H moves the cursor to top-left corner
     std::cout << "\x1B[2J\x1B[H";
 }
 
 void endprogramm(boolean *continueprogramme) {
-    clear();
     cout <<"Ending programm";
     for(int i = 0; i < 3;i++)  {
         cout<<".";
@@ -22,6 +20,49 @@ void endprogramm(boolean *continueprogramme) {
     }
     *continueprogramme = false;
 }
+
+string decoder (string input) {
+    return input;
+}
+
+string inputpassword() {
+    string password;
+    char ch;
+    cout << "Enter Password:";
+    ch = _getch();
+    while(ch != 13){//character 13 is enter
+        password.push_back(ch);
+        ch = _getch();
+    }
+    string response = (password);
+    return password;
+}
+///////////////////////////////////////////////////////////
+//Login
+///////////////////////////////////////////////////////////
+
+boolean checklogin(string username, string password) {
+
+}
+
+void login() {
+    string username;
+    string password;
+
+    cout << "Login" << endl;
+    cout << "Please enter your username and password." << endl;
+    cout << "Username: ";
+    cin >> username;
+    password = decoder(inputpassword());
+
+    checklogin(username, password);
+}
+
+///////////////////////////////////////////////////////////
+//Registration
+///////////////////////////////////////////////////////////
+
+
 
 ///////////////////////////////////////////////////////////
 //Menu
@@ -72,15 +113,22 @@ int menu() {
         if(key == '\r') { //carrage return = enter key
             if(counter == 1)
             {
-                cout << "Menu 1 is Open";
+                clear();
+                login();
+                clear();
+
             }
             if(counter == 2)
             {
+                clear();
                 cout << "Menu 2 is Open";
+                clear();
             }
             if(counter == 3)
             {
+                clear();
                 endprogramm(&continueprogramm);
+                clear();
             }
         }
         if(counter == 1) {
