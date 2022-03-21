@@ -52,27 +52,7 @@ typedef struct Data {
 	char password[20];
 }struDataElm;
 
-
-struElm* createuserlist() {
-
-    struElm* pNew = NULL;
-	pNew = (struElm*)malloc(sizeof(struElm));
-	if (pNew == NULL) exit(-1);
-	pNew->pNext = NULL;
-    pNew->pData = NULL; 
-    pNew->pData = (struDataElm*)malloc(sizeof(struDataElm));
-    strcpy(pNew->pData->username, "admin");
-    strcpy(pNew->pData->password, "1234");
-
-    return pNew;
-}
-
-void adduser(struElm* pFirst, string username, string password) {
-    struElm* pCurrent = pFirst;
-    while(pCurrent->pNext != NULL) {
-        pCurrent = pCurrent->pNext;
-    }
-
+struElm* createNewContainer(string username, string password) {
     struElm* pNew = NULL;
 	pNew = (struElm*)malloc(sizeof(struElm));
 	if (pNew == NULL) exit(-1);
@@ -81,7 +61,20 @@ void adduser(struElm* pFirst, string username, string password) {
     pNew->pData = (struDataElm*)malloc(sizeof(struDataElm));
     strcpy(pNew->pData->username, username.c_str());
     strcpy(pNew->pData->password, password.c_str());
-    pCurrent->pNext = pNew;
+    return pNew;
+}
+
+
+struElm* createuserlist() {
+    return createNewContainer("admin", "1234");
+}
+
+void adduser(struElm* pFirst, string username, string password) {
+    struElm* pCurrent = pFirst;
+    while(pCurrent->pNext != NULL) {
+        pCurrent = pCurrent->pNext;
+    }
+    pCurrent->pNext = createNewContainer(username, password);
 }
 
 ///////////////////////////////////////////////////////////
@@ -104,7 +97,6 @@ boolean checklogin(struElm* pFirst, string username, string password) {
 int login(struElm* pFirst) {
     string username;
     string password;
-    string waiter;
 
     cout << "Login" << endl;
     cout << "Please enter your username and password." << endl;
@@ -115,18 +107,18 @@ int login(struElm* pFirst) {
     if(checklogin(pFirst,username, password)){
         clear();
         cout << "Login successful" << endl;
-        cin >> waiter;
+        _getch();
     } else {
         cout << '\n';
         cout << "Try again" << endl;
         if(checklogin(pFirst,username, decoder(inputpassword()))) {
             clear();
             cout << "Login successful" << endl;
-            cin >> waiter; 
+             _getch();
         } else {
             cout << '\n';
             cout << "Login failed";
-            cin >> waiter;
+             _getch();
             return 0;
         }
     }
@@ -141,7 +133,6 @@ int registration(struElm* pFirst) {
     string username;
     string firstpassword;
     string secondpassword;
-    string waiter;
 
     clear();
     cout << "Accountcreation" << endl;
@@ -157,13 +148,13 @@ int registration(struElm* pFirst) {
     if(firstpassword.compare(secondpassword) == 0) {
         adduser(pFirst, username, firstpassword);
         cout << "Registration succeeded!";
-        cin >> waiter;
+         _getch();
         clear();
         return 0;
 
     } else {
         cout << "Registration failed!";
-        cin >> waiter;
+         _getch();
         clear();
         return 0;
     }
