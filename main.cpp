@@ -48,19 +48,23 @@ typedef struct Elm {
 }struElm;
 
 typedef struct Data {
-	std::string username;
-	std::string password;
+	char username[20];
+	char password[20];
 }struDataElm;
 
 
 struElm* createuserlist() {
 
-    struElm pNew;
-    pNew.pNext = NULL;
-    pNew.pData->username = "admin";
-    pNew.pData->password = "1234";
+    struElm* pNew = NULL;
+	pNew = (struElm*)malloc(sizeof(struElm));
+	if (pNew == NULL) exit(-1);
+	pNew->pNext = NULL;
+    pNew->pData = NULL; 
+    pNew->pData = (struDataElm*)malloc(sizeof(struDataElm));
+    strcpy(pNew->pData->username, "admin");
+    strcpy(pNew->pData->password, "1234");
 
-    return &pNew;
+    return pNew;
 }
 
 ///////////////////////////////////////////////////////////
