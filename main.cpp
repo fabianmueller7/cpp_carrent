@@ -31,7 +31,12 @@ string inputpassword() {
     cout << "Enter Password:";
     ch = _getch();
     while(ch != 13){//character 13 is enter
-        password.push_back(ch);
+        if(ch != '\b') {
+            password.push_back(ch);
+        }
+        else {
+            password.pop_back();
+        }
         ch = _getch();
     }
     string response = (password);
@@ -63,7 +68,6 @@ struElm* createNewContainer(string username, string password) {
     strcpy(pNew->pData->password, password.c_str());
     return pNew;
 }
-
 
 struElm* createuserlist() {
     return createNewContainer("admin", "1234");
