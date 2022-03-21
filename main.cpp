@@ -81,6 +81,16 @@ void adduser(struElm* pFirst, string username, string password) {
     pCurrent->pNext = createNewContainer(username, password);
 }
 
+struElm* getUserbyUsername(struElm* pFirst, string username) {
+    struElm* pCurrent = pFirst;
+    do {
+        string pCurrentusername = pCurrent->pData->username;
+        if(pCurrentusername.compare(username) == 0){
+            return pCurrent;
+        }
+    }while(pCurrent->pNext != NULL);
+}
+
 ///////////////////////////////////////////////////////////
 //Login
 ///////////////////////////////////////////////////////////
