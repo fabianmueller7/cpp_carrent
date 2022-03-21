@@ -37,17 +37,49 @@ string inputpassword() {
     string response = (password);
     return password;
 }
+
+///////////////////////////////////////////////////////////
+//Userdatabase
+///////////////////////////////////////////////////////////
+
+typedef struct Elm {
+	struct Data* pData;
+	struct Elm* pNext;
+}struElm;
+
+typedef struct Data {
+	std::string username;
+	std::string password;
+}struDataElm;
+
+
+struElm* createuserlist() {
+
+    struElm pNew;
+    pNew.pNext = NULL;
+    pNew.pData->username = "admin";
+    pNew.pData->password = "1234";
+
+    return &pNew;
+}
+
 ///////////////////////////////////////////////////////////
 //Login
 ///////////////////////////////////////////////////////////
 
-boolean checklogin(string username, string password) {
-
+boolean checklogin(struElm* pFirst, string username, string password) {
+    do{
+        if(pFirst->pData->username == username && pFirst->pData->password == password){
+            return true;
+        }
+    }while(pFirst->pNext != NULL);
+    return false;
 }
 
-void login() {
+void login(struElm* pFirst) {
     string username;
     string password;
+    string test;
 
     cout << "Login" << endl;
     cout << "Please enter your username and password." << endl;
@@ -55,14 +87,22 @@ void login() {
     cin >> username;
     password = decoder(inputpassword());
 
-    checklogin(username, password);
+    if(checklogin(pFirst,username, password)){
+        cout << "Login successful" << endl;
+        cin >> test;
+    } else {
+        cout << "Login failed" << endl;
+        cin >> test;
+    }
 }
 
 ///////////////////////////////////////////////////////////
 //Registration
 ///////////////////////////////////////////////////////////
 
+void registration() {
 
+}
 
 ///////////////////////////////////////////////////////////
 //Menu
@@ -79,7 +119,7 @@ void gotoxy(int x, int y) {
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),c);
 }
 
-int menu() {
+int menu(struElm* pFirst) {
 
     boolean continueprogramm = true;
     clear();
@@ -114,7 +154,7 @@ int menu() {
             if(counter == 1)
             {
                 clear();
-                login();
+                login(pFirst);
                 clear();
 
             }
@@ -154,9 +194,8 @@ int menu() {
 //Main
 ///////////////////////////////////////////////////////////
 
-
 int main() {
-    menu();
+    menu(createuserlist());
     return 0;
 }
 
