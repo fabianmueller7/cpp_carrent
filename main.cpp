@@ -43,6 +43,129 @@ string inputpassword() {
     return password;
 }
 
+void gotoxy(int x, int y) {
+    COORD c;
+    c.X=x;
+    c.Y=y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),c);
+}
+
+///////////////////////////////////////////////////////////
+//Field
+///////////////////////////////////////////////////////////
+
+enum fieldstate {border, head, tail, fruit, board};
+enum direction {dleft, dup, ddown, dright};
+
+typedef struct BoardElm {
+	struct BoardData* pData;
+	struct BoardElm* pNext;
+}struBoardElm;
+
+typedef struct BoardData {
+	int line;
+	int column;
+    int number;
+    fieldstate state;
+}struBoardDataElm;
+
+void filldata(struBoardDataElm* pData, int fieldnumber) {
+    
+    pData->line = fieldnumber/12;
+    pData->column = fieldnumber%12;
+    pData->number = fieldnumber;
+
+    if(pData->line == 0 || pData->line == 11 || pData->column == 0 || pData->column == 11){
+        pData->state = border;
+    }
+    else if(pData->line == 6 && pData->column == 7){
+        pData->state = head;
+    }
+    else if(pData->line == 6 && pData->column == 8){
+        pData->state = tail;
+    }
+    else if(pData->line == 6 && pData->column == 5){
+        pData->state = fruit;
+    }
+    else {
+        pData->state = board;
+    }
+}
+
+struBoardElm* gamesetup(){
+    struBoardElm* pNew = NULL;
+	struBoardElm* pFirst = NULL;
+	struBoardElm* pLast = NULL;
+
+    for(int i = 0; i < 144;i++) {
+        pNew = (struBoardElm*)malloc(sizeof(struBoardElm));
+		if (pNew == NULL) exit(-1);
+		pNew->pNext = NULL;
+		//Neues Element an Liste anfügen
+		if (pFirst == NULL) pFirst = pNew;
+		if (pLast != NULL) pLast->pNext = pNew;
+		pLast = pNew;
+		pNew->pData = (struBoardDataElm*)malloc(sizeof(struBoardDataElm));
+		filldata(pNew->pData,i);
+    }
+
+    return pFirst;
+}
+
+void displayfield(struBoardElm* pFirst) {
+    struBoardElm* pCurrent = pFirst;
+    for(int i = 0; i < 144; i++){
+        gotoxy(pCurrent->pData->column + 1, pCurrent->pData->line + 1);
+        switch(pCurrent->pData->state) {
+            case border : cout << "#";
+            case head : cout << "X";
+            case tail : cout << "O";
+            case fruit : cout << "S";
+            case board : cout << " ";
+        }
+        if(pCurrent->pData->column = 11) {
+            cout << "\n";
+        }
+        pCurrent = pCurrent->pNext;
+    }
+}
+
+void setfield(struBoardElm* pFirst, int line, int column, fieldstate state) {
+    struBoardElm* pCurrent = pFirst;
+    for(int i = 0; i < 144; i++) {
+        if(pCurrent->pData->line == line && pCurrent->pData->column == column) {
+            pCurrent->pData->state = state;
+        }
+        pCurrent = pCurrent->pNext;
+    }
+}
+
+void move(struBoardElm* pFirst, direction direction) {
+    struBoardElm* pCurrent = pFirst;
+    boolean headupdated = false;
+    for(int i = 0; i < 144; i++) {
+        
+
+        pCurrent = pCurrent->pNext;
+    }
+}
+
+void startgame() {
+    boolean gameover = false;
+    int snakelength = 1;
+    direction snakegoing = dleft;
+
+    struBoardElm* firstfield = gamesetup();
+    clear();
+
+    while(gameover = false){
+        displayfield(firstfield);
+        Sleep(500);
+
+    }
+    
+}
+
 ///////////////////////////////////////////////////////////
 //Userdatabase
 ///////////////////////////////////////////////////////////
@@ -121,14 +244,16 @@ int login(struElm* pFirst) {
     if(checklogin(pFirst,username, password)){
         clear();
         cout << "Login successful" << endl;
-        _getch();
+        Sleep(500);
+        startgame();
     } else {
         cout << '\n';
         cout << "Try again" << endl;
         if(checklogin(pFirst,username, decoder(inputpassword()))) {
             clear();
             cout << "Login successful" << endl;
-             _getch();
+            Sleep(500);
+            startgame();
         } else {
             cout << '\n';
             cout << "Login failed";
@@ -184,12 +309,6 @@ void color(int color) {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 }
 
-void gotoxy(int x, int y) {
-    COORD c;
-    c.X=x;
-    c.Y=y;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),c);
-}
 
 int menu(struElm* pFirst) {
 
