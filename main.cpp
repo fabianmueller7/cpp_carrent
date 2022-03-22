@@ -1,6 +1,7 @@
 #include <iostream>
 #include<windows.h>
 #include <conio.h>
+#include <vector>
 using namespace std;
 
 ///////////////////////////////////////////////////////////
@@ -57,112 +58,60 @@ void gotoxy(int x, int y) {
 enum fieldstate {border, head, tail, fruit, board};
 enum direction {dleft, dup, ddown, dright};
 
-typedef struct BoardElm {
-	struct BoardData* pData;
-	struct BoardElm* pNext;
-}struBoardElm;
-
-typedef struct BoardData {
-	int line;
-	int column;
-    int number;
-    fieldstate state;
-}struBoardDataElm;
-
-void filldata(struBoardDataElm* pData, int fieldnumber) {
-    
-    pData->line = fieldnumber/12;
-    pData->column = fieldnumber%12;
-    pData->number = fieldnumber;
-
-    if(pData->line == 0 || pData->line == 11 || pData->column == 0 || pData->column == 11){
-        pData->state = border;
-    }
-    else if(pData->line == 6 && pData->column == 7){
-        pData->state = head;
-    }
-    else if(pData->line == 6 && pData->column == 8){
-        pData->state = tail;
-    }
-    else if(pData->line == 6 && pData->column == 5){
-        pData->state = fruit;
-    }
-    else {
-        pData->state = board;
-    }
-}
-
-struBoardElm* gamesetup(){
-    struBoardElm* pNew = NULL;
-	struBoardElm* pFirst = NULL;
-	struBoardElm* pLast = NULL;
-
-    for(int i = 0; i < 144;i++) {
-        pNew = (struBoardElm*)malloc(sizeof(struBoardElm));
-		if (pNew == NULL) exit(-1);
-		pNew->pNext = NULL;
-		//Neues Element an Liste anfügen
-		if (pFirst == NULL) pFirst = pNew;
-		if (pLast != NULL) pLast->pNext = pNew;
-		pLast = pNew;
-		pNew->pData = (struBoardDataElm*)malloc(sizeof(struBoardDataElm));
-		filldata(pNew->pData,i);
-    }
-
-    return pFirst;
-}
-
-void displayfield(struBoardElm* pFirst) {
-    struBoardElm* pCurrent = pFirst;
-    for(int i = 0; i < 144; i++){
-        gotoxy(pCurrent->pData->column + 1, pCurrent->pData->line + 1);
-        switch(pCurrent->pData->state) {
-            case border : cout << "#";
-            case head : cout << "X";
-            case tail : cout << "O";
-            case fruit : cout << "S";
-            case board : cout << " ";
+void gamesetup(fieldstate (*field)[12]){
+    for(int l = 0; l < 12; l++) {
+        for(int c = 0; c < 12; c++) {
+            if(l == 0 || l == 11 || c == 0 || c == 11){
+                *(*(field + c)+ l) =  border;
+            }
+            else if(l == 6 && c == 7){
+                *(*(field + c)+ l) = head;
+            }
+            else if(l == 6 && c == 8){
+                *(*(field + c)+ l) = tail;
+            }
+            else if(l == 6 && c == 5){
+                *(*(field + c)+ l) = fruit;
+            }
+            else {
+                *(*(field + c)+ l) = board;
+            }
         }
-        if(pCurrent->pData->column = 11) {
-            cout << "\n";
-        }
-        pCurrent = pCurrent->pNext;
     }
 }
 
-void setfield(struBoardElm* pFirst, int line, int column, fieldstate state) {
-    struBoardElm* pCurrent = pFirst;
-    for(int i = 0; i < 144; i++) {
-        if(pCurrent->pData->line == line && pCurrent->pData->column == column) {
-            pCurrent->pData->state = state;
+void displayfield(fieldstate (*field)[12]) {
+    for(int l = 0; l < 12; l++) {
+        for(int c = 0; c < 12; c++) {
+            gotoxy(c+1 , l+1);
+            switch(*(*(field + c)+ l)) {
+                case border : cout << "#";
+                case head : cout << "X";
+                case tail : cout << "O";
+                case fruit : cout << "S";
+                case board : cout << " ";
+            }
+            if(c == 11) {
+                cout << "\n";
+            }
         }
-        pCurrent = pCurrent->pNext;
-    }
-}
-
-void move(struBoardElm* pFirst, direction direction) {
-    struBoardElm* pCurrent = pFirst;
-    boolean headupdated = false;
-    for(int i = 0; i < 144; i++) {
-        
-
-        pCurrent = pCurrent->pNext;
     }
 }
 
 void startgame() {
+    fieldstate field[12][12];
+    fieldstate (*fieldpointer)[12];
+    fieldpointer = field;
     boolean gameover = false;
     int snakelength = 1;
     direction snakegoing = dleft;
-
-    struBoardElm* firstfield = gamesetup();
+    gamesetup(fieldpointer);
     clear();
 
-    while(gameover = false){
-        displayfield(firstfield);
-        Sleep(500);
+    displayfield(fieldpointer);
+    _getch();
 
-    }
+    
     
 }
 
@@ -214,7 +163,7 @@ struElm* getUserbyUsername(struElm* pFirst, string username) {
     }while(pCurrent->pNext != NULL);
 }
 
-///////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 //Login
 ///////////////////////////////////////////////////////////
 
@@ -386,6 +335,7 @@ int menu(struElm* pFirst) {
 ///////////////////////////////////////////////////////////
 
 int main() {
+    startgame();
     menu(createuserlist());
     return 0;
 }
