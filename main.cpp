@@ -64,20 +64,48 @@ void gamesetup(fieldstate (*field)[12]){
             if(l == 0 || l == 11 || c == 0 || c == 11){
                 *(*(field + c)+ l) =  border;
             }
-            else if(l == 6 && c == 7){
-                *(*(field + c)+ l) = head;
-            }
-            else if(l == 6 && c == 8){
-                *(*(field + c)+ l) = tail;
-            }
-            else if(l == 6 && c == 5){
-                *(*(field + c)+ l) = fruit;
-            }
             else {
                 *(*(field + c)+ l) = board;
             }
         }
     }
+}
+
+vector<COORD> updatefield(fieldstate (*field)[12], direction direction, vector<COORD> vtail, int snakelength) {
+    COORD chead = vtail.front();
+    
+    switch (direction)
+    {
+    case dup:
+        chead.Y = chead.Y-1;
+        break;
+    case ddown:
+        chead.Y = chead.Y+1;
+        break;
+    case dleft:
+        chead.X = chead.X-1;
+        break;
+    case dright:
+        chead.X = chead.X+1;
+        break;
+    }
+
+    vtail.insert(vtail.begin(),chead);
+    
+    for(size_t i = 0; i < vtail.size(); i++) {
+        if(snakelength >= i) {
+            if(i == 0) {
+                *(*(field + vtail[i].X)+ vtail[i].Y) = head;
+            }
+            else {
+                *(*(field + vtail[i].X)+ vtail[i].Y) = tail;
+            }
+        } else {
+            *(*(field + vtail[i].X)+ vtail[i].Y) = board;
+        }
+    }
+
+    return vtail;
 }
 
 void displayfield(fieldstate (*field)[12]) {
@@ -103,14 +131,27 @@ void startgame() {
     fieldstate (*fieldpointer)[12];
     fieldpointer = field;
     boolean gameover = false;
-    int snakelength = 1;
-    direction snakegoing = dleft;
+    direction direction = dleft;
+    vector<COORD> tail;
+    COORD ca;
+    ca.X = 8;
+    ca.Y = 6;
+    tail.insert(tail.begin(),ca);
+    COORD cb;
+    cb.X = 7;
+    cb.Y = 6;
+    tail.insert(tail.begin(),cb);
+    int snakelength = 2;
+
     gamesetup(fieldpointer);
     clear();
 
-    displayfield(fieldpointer);
-    _getch();
-
+    while(gameover == false){
+        _getch();
+        displayfield(fieldpointer);
+        Sleep(500);
+        tail = updatefield(fieldpointer, direction, tail, snakelength);
+    }
     
     
 }
@@ -335,7 +376,7 @@ int menu(struElm* pFirst) {
 ///////////////////////////////////////////////////////////
 
 int main() {
-    startgame();
+    //startgame();
     menu(createuserlist());
     return 0;
 }
